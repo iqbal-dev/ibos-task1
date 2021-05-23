@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from "formik";
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 import { addData } from "../action/action";
@@ -8,10 +8,6 @@ import Table from "./Table";
 
 const AddFile = () => {
   const dispatch = useDispatch();
-  const [show, setShow] = useState({
-    name: "",
-    email: "",
-  });
   const SignupSchema = Yup.object().shape({
     name: Yup.string()
       .min(2, "Too Short!")
@@ -29,7 +25,6 @@ const AddFile = () => {
     }
     resetForm();
   };
-  console.log(show);
   return (
     <div className="form">
       <Formik
@@ -40,16 +35,12 @@ const AddFile = () => {
         validationSchema={SignupSchema}
         onSubmit={handleSubmit}
       >
-        {({ errors, touched }) => (
+        {({ errors, touched, values }) => (
           <Form>
             <div>
               <label htmlFor="name">Name</label>
               <br />
-              <Field
-                name="name"
-                id="name"
-                onBlur={(e) => setShow({ name: e.target.value })}
-              />
+              <Field name="name" id="name" />
               {errors.name && touched.name ? (
                 <div style={{ color: "red" }}> {errors.name}</div>
               ) : null}
@@ -57,19 +48,16 @@ const AddFile = () => {
             <div>
               <label htmlFor="email">Email</label>
               <br />
-              <Field
-                name="email"
-                type="email"
-                id="email"
-                onBlur={(e) => setShow({ email: e.target.value })}
-              />
+              <Field name="email" type="email" id="email" />
               {errors.email && touched.email ? (
                 <div style={{ color: "red" }}>{errors.email}</div>
               ) : null}
             </div>
             <Field
               name="button"
-              disabled={show.email === "" || show.name === "" ? true : false}
+              disabled={
+                values.email !== "" && values.name !== "Required" ? false : true
+              }
               type="submit"
               value="Add"
               style={{
